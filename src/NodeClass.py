@@ -1,9 +1,8 @@
 from copy import deepcopy
 
+
 class NodeClass:
-
-
-    """basic constructor """
+    """basic constructor"""
 
     def __init__(self, key: int, pos: tuple):
         self.key = key
@@ -11,6 +10,9 @@ class NodeClass:
         self.edgesTo = dict()  # reverse edges going to the main node
         self.tag = 0.0
         self.location = pos
+
+    # def __repr__(self):
+    #     print(self.getKey() + )
 
     def getKey(self) -> int:
         return self.key
@@ -53,4 +55,3 @@ class NodeClass:
     def clearNode(self):
         self.edgesFrom.clear()
         self.edgesTo.clear()
-

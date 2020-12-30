@@ -6,13 +6,16 @@ import src.node_data as Node
 
 class DiGraph(GraphInterface):
 
-    def __init__(self):  # (key-id, NodeClass)
+    def __init__(self):  # (key-id, node_data)
         self.myGraph = dict()
         self.MC = 0
         self.edgesCounter = 0
 
     def __repr__(self):
         return "Graph: |V|=" + str(len(self.myGraph)) + " |E|=" + str(self.edgesCounter)
+
+    def get_node(self, key: int) -> Node:
+        return self.myGraph.get(key)
 
     def v_size(self) -> int:
         return len(self.myGraph.keys())
@@ -24,7 +27,10 @@ class DiGraph(GraphInterface):
         return self.myGraph
 
     def all_in_edges_of_node(self, id1: int) -> dict:
-        node = self.myGraph.get(id1, Node)  # returns NodeClass with id1
+        node: Node = self.myGraph.get(id1)
+        if node is None:
+            return None
+
         return node.getEdgesTo()
 
     def all_out_edges_of_node(self, id1: int) -> dict:
@@ -38,19 +44,15 @@ class DiGraph(GraphInterface):
         node1: Node = self.myGraph.get(id1, Node)
         node2: Node = self.myGraph.get(id2, Node)
 
-        if (node1 is not None) and (node2 is not None):
+        if(node1 is None) or (node2 is None):
+            return False
+        if node1.getEdgesFrom().get(id2) is not None:
+            return False
 
-            dict1 = node1.getEdgesFrom()
-            if dict1.get(id2) == weight:
-                return False
-
-            if dict1.get(id2) is None:
-                self.edgesCounter = self.edgesCounter + 1
-
-            node1.addEdgesFrom(id2, weight)
-            node2.addEdgesTo(id1, weight)
-            self.MC = self.MC + 1
-
+        node1.addEdgesFrom(id2, weight)
+        node2.addEdgesTo(id1, weight)
+        self.MC = self.MC + 1
+        self.edgesCounter = self.edgesCounter + 1
         return True
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
@@ -68,14 +70,16 @@ class DiGraph(GraphInterface):
         return True
 
     def remove_node(self, node_id: int) -> bool:
-        node = self.myGraph.get(node_id, Node)
+        node: Node = self.myGraph.get(node_id)
         if node is None:
             return False
 
         dict1: dict = node.getEdgesTo()
         for key in dict1:
-            tempNode = self.myGraph.get(key, Node)
+            tempNode: Node = self.myGraph.get(key)
             tempNode.removeEdgesFrom(node_id)
+            if node_id in tempNode.getEdgesTo().keys():
+                tempNode.removeEdgesTo(node_id)
             self.MC = self.MC + 1
             self.edgesCounter = self.edgesCounter - 1
 
@@ -85,8 +89,8 @@ class DiGraph(GraphInterface):
         return True
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
-        node1 = self.myGraph.get(node_id1, Node)
-        node2 = self.myGraph.get(node_id2, Node)
+        node1: Node = self.myGraph.get(node_id1)
+        node2: Node = self.myGraph.get(node_id2)
 
         if (node1 is not None) and (node2 is not None):
             node1.removeEdgesFrom(node_id2)

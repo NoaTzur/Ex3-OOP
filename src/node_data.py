@@ -6,10 +6,11 @@ class node_data:
 
     def __init__(self, key: int, pos: tuple):
         self.key = key
-        self.edgesFrom = dict()  # edges that going from the main node to others
-        self.edgesTo = dict()  # reverse edges going to the main node
-        self.tag = 0.0
+        self.edgesFrom = dict()  # edges that going from the main node to others <key: int, weight: float>
+        self.edgesTo = dict()  # reverse edges going to the main node <key: int, weight: float>
+        self.tag = float('inf')
         self.location = pos
+        self.componentMark = -1
 
     def __repr__(self):
         return str(self.getLocation())
@@ -32,8 +33,7 @@ class node_data:
             del self.edgesTo[key]
 
     def getEdgesFrom(self) -> dict:
-        dict1 = self.edgesFrom
-        return dict1
+        return self.edgesFrom
 
     def getEdgesTo(self) -> dict:
         return self.edgesTo
@@ -55,3 +55,9 @@ class node_data:
     def clearNode(self):
         self.edgesFrom.clear()
         self.edgesTo.clear()
+
+    def setComponentMark(self, mark: int):
+        self.componentMark = mark
+
+    def getComponentMark(self):
+        return self.componentMark

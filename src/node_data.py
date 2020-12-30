@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 
-class NodeClass:
+class node_data:
     """basic constructor"""
 
     def __init__(self, key: int, pos: tuple):
@@ -11,8 +11,8 @@ class NodeClass:
         self.tag = 0.0
         self.location = pos
 
-    # def __repr__(self):
-    #     print(self.getKey() + )
+    def __repr__(self):
+        return str(self.getLocation())
 
     def getKey(self) -> int:
         return self.key

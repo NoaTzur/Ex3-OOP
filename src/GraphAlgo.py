@@ -1,24 +1,23 @@
 import json
 import heapq as hq
+import random
 
 from typing import List
 
-from src import DiGraph as Graph
+from src import DiGraph as Graph, DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
-from src.GraphInterface import GraphInterface
 import src.node_data as Node
-
 
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self):
-        self.currGraph: Graph = Graph.DiGraph()
+    def __init__(self, g: Graph = Graph.DiGraph()):
+        self.currGraph: Graph = g
         self.parents: dict = dict()
         self.visitedNodes: dict = dict()  # 0-White, 1-Gray, 2-Black
         self.counter: int = 0
 
-    def get_graph(self) -> GraphInterface:
+    def get_graph(self) -> DiGraph:
         return self.currGraph
 
     def load_from_json(self, file_name: str) -> bool:
@@ -34,9 +33,14 @@ class GraphAlgo(GraphAlgoInterface):
             nodeToConvert: dict = nodes[i]  # looks like: {'id': 0, 'pos': '35.212217299435025,32.106235628571426,0.0'}
             key: int = nodeToConvert.get('id')
             pos: str = nodeToConvert.get('pos')
-            x: float = float(pos.split(",")[0])  # convert x position to float from string
-            y: float = float(pos.split(",")[1])  # convert y position to float from string
-            self.currGraph.add_node(key, (x, y))
+            if pos is None:
+                x = random.randint(1, 20)
+                y = random.randint(1, 20)
+                self.currGraph.add_node(key, (x, y))
+            else:
+                x: float = float(pos.split(",")[0])  # convert x position to float from string
+                y: float = float(pos.split(",")[1])  # convert y position to float from string
+                self.currGraph.add_node(key, (x, y))
 
         for j in range(number_of_edges):
             edgeToConvert: dict = edges[j]  # looks like: {'src': 0, 'dest': 1, 'w': 1.0286816758196655}
@@ -44,24 +48,46 @@ class GraphAlgo(GraphAlgoInterface):
             destNode: int = edgeToConvert.get('dest')
             weight: float = edgeToConvert.get('w')
             self.currGraph.add_edge(srcNode, destNode, weight)
+        return True
 
     def save_to_json(self, file_name: str) -> bool:
+        listOfNodes: list = []
+        i: int = 0
+        for node in self.currGraph.get_all_v().values():
+            pos: tuple = node.getLocation()
+            st = str(pos[0]) + "," + str(pos[1])
+            listOfNodes.insert(i, {"id": node.getKey(), "pos": st})
+            i+=1
+
+        listOfEdges: list = []
+        j: int = 0
+        for node_key in self.currGraph.get_all_v().keys():
+            for node_neigh in self.currGraph.all_out_edges_of_node(node_key).keys():
+                weight: float = self.currGraph.all_out_edges_of_node(node_key).get(node_neigh)
+                listOfEdges.insert(j, {"src": node_key, "dest": node_neigh, "w": weight})
+                j+=1
+
+        graph_dict: dict = {"Nodes": listOfNodes, "Edges": listOfEdges}
+
         with open(file_name, 'w') as file:
-            json.dump(self.currGraph, file)
+            json.dump(graph_dict, file)
             return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         self.parents.clear()
+        for node in self.currGraph.get_all_v().values():
+            node.setTag(float('inf'))
+
         shortestPathNum: float = self.Dijkstra_float(id1, id2)
-        if shortestPathNum is not -1:
+        if shortestPathNum != float('inf'):
             shortestPathList: list = self.Dijkstra_path(id1, id2)
         else:
-            return -1, None
+            return float('inf'), []
 
         return shortestPathNum, shortestPathList
 
     def Dijkstra_float(self, src: int, dest: int) -> float:
-        if src is dest:
+        if src == dest:
             return 0
         hasVisited = dict()  # <key-id: int, 0\1: int>
         node: Node.node_data = self.currGraph.get_node(src)
@@ -71,10 +97,10 @@ class GraphAlgo(GraphAlgoInterface):
         listOfNodes.append((node.getTag(), node))
         hq.heapify(listOfNodes)
 
-        while len(listOfNodes) is not 0:
+        while len(listOfNodes) != 0:
             tempNode: Node = hq.heappop(listOfNodes)[1]
             if hasVisited.get(tempNode.getKey()) is None:
-                for node_neigh, w in tempNode.getEdgesFrom():
+                for node_neigh, w in tempNode.getEdgesFrom().items():
                     dist: float = tempNode.getTag() + w
                     n1: Node = self.currGraph.get_node(node_neigh)
                     if dist < n1.getTag():
@@ -82,32 +108,32 @@ class GraphAlgo(GraphAlgoInterface):
                         hq.heappush(listOfNodes, (dist, n1))
                         self.parents[node_neigh] = tempNode.getKey()
 
-                if tempNode.getKey() is dest:
+                if tempNode.getKey() == dest:
                     return tempNode.getTag()
                 hasVisited[tempNode.getKey()] = 1
 
-        return -1
+        return float('inf')
 
     def Dijkstra_path(self, src: int, dest: int) -> list:
         path: list = []
-        if src is dest:
-            path.append(self.currGraph.get_node(src))
+        if src == dest:
+            path.append(src)
             return path
 
-        path.append(self.currGraph.get_node(dest))
-        parentNode: Node = self.currGraph.get_node(self.parents.get(dest))
+        path.append(dest)
+        parentNode: int = self.parents.get(dest)
 
-        while parentNode is not None:
+        while parentNode != -1:
             if parentNode not in path:  # checks if the contains function know to check if node is contains
                 path.insert(0, parentNode)
 
-            if self.parents.get(parentNode.getKey()):  # checks get_node !!!!! does not return Node ????
-                parentNode = self.currGraph.get_node(self.parents.get(parentNode.getKey()))
-                if parentNode.getKey() is src:
-                    path.insert(0, self.currGraph.get_node(src))
-                    parentNode = None
+            if self.parents.get(parentNode) is not None:
+                parentNode = self.parents.get(parentNode)
+                if parentNode == src:
+                    path.insert(0, parentNode)
+                    parentNode = -1
             else:
-                parentNode = None
+                parentNode = -1
 
         return path
 
@@ -125,6 +151,7 @@ class GraphAlgo(GraphAlgoInterface):
         self.counter = 0
         allComponents = []
         self.visitedNodes.clear()
+        self.DFS()
         """ creates number of list (as number od counter-number of the components in the graph)
         and append the lists to the Main List """
         for i in range(self.counter):
@@ -136,6 +163,7 @@ class GraphAlgo(GraphAlgoInterface):
         return allComponents
 
     def DFS(self):
+
         for nodeKey in self.currGraph.get_all_v().keys():
             self.visitedNodes[nodeKey] = 0
 
@@ -144,18 +172,18 @@ class GraphAlgo(GraphAlgoInterface):
             self.counter = self.counter+1
 
     def DFSvisit(self, src: int):
+        if self.visitedNodes.get(src) == 0:
+            self.currGraph.get_node(src).setComponentMark(self.counter)
+
         self.visitedNodes[src] = 1
-        self.currGraph.get_node(src).setComponentMark(self.counter)
         for node_neigh in self.currGraph.get_node(src).getEdgesFrom().keys():
             path: float = self.shortest_path(node_neigh, src)[0]
 
-            if self.visitedNodes.get(node_neigh) is 0 and path > 0:
+            if self.visitedNodes.get(node_neigh) == 0 and path != float('inf'):
                 self.currGraph.get_node(node_neigh).setComponentMark(self.counter)
                 self.DFSvisit(node_neigh)
 
-            self.visitedNodes[src] = 2  # needs to be outside the for ?
-
-
+        self.visitedNodes[src] = 2  # needs to be outside the for ?
 
     def plot_graph(self) -> None:
         pass

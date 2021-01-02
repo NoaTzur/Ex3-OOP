@@ -160,10 +160,15 @@ class GraphAlgo(GraphAlgoInterface):
         for nodes in self.currGraph.get_all_v().values():
             allComponents[nodes.getComponentMark()].append(nodes.getKey())
 
-        return allComponents
+        filteredList: list = []
+
+        for i in range(len(allComponents)):
+            if len(allComponents[i]) > 0:
+                filteredList.append(allComponents[i])
+
+        return filteredList
 
     def DFS(self):
-
         for nodeKey in self.currGraph.get_all_v().keys():
             self.visitedNodes[nodeKey] = 0
 

@@ -1,5 +1,7 @@
 import random
 import unittest
+import time
+from typing import List
 
 from src import GraphAlgo as GA
 from src import DiGraph as G
@@ -78,9 +80,91 @@ class MyTestCase(unittest.TestCase):
         g.add_edge(4, 2, 7.8)
 
         ga: GA = GA.GraphAlgo(g)
-        print(ga.shortest_path(3, 4)[0])
+
         print(ga.connected_components())
 
+    """creates a graph with 100 nodes"""
+    def creatingGraph1(self) -> G:
+        g: G = G.DiGraph()
+        for i in range(100):
+            g.add_node(i)
+
+    """ creates graph with 10^4 nodes"""
+    def creatingGraph2(self) -> G:
+        g: G = G.DiGraph()
+        for i in range(10000):
+            g.add_node(i)
+
+    """ creates graph with 10^6 nodes"""
+    def creatingGraph3(self) -> G:
+        g: G = G.DiGraph()
+        for i in range(1000000):
+            g.add_node(i)
+
+
+    def test_creating1(self):
+        start = float(time.time())
+        self.creatingGraph1()
+        end = float(time.time())
+        print("100 nodes - Time in seconds: " + str(end-start))
+
+    def test_creating2(self):
+        start = float(time.time())
+        self.creatingGraph2()
+        end = float(time.time())
+        print("10^4 nodes - Time in seconds: " + str(end - start))
+
+    def test_creating3(self):
+        start = float(time.time())
+        self.creatingGraph3()
+        end = float(time.time())
+        print("10^6 nodes - Time in seconds: " + str(end - start))
+
+    def test_shortestPathTime(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A3")
+
+        start = float(time.time())
+        ans: tuple = ga.shortest_path(0, 41)
+        end = float(time.time())
+        print("Time in seconds: " + str(end-start))
+        print(ans)
+
+    def test_loadTime(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+
+        start = float(time.time())
+        ga.load_from_json("../data/A3")
+        end = float(time.time())
+        print("Time in seconds: " + str(end - start))
+
+        self.assertEqual(49, g.v_size())
+        self.assertEqual(136, g.e_size())
+        print("after loading, |V| = 49, |E| = 136")
+
+    def test_save(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A5")
+
+        start = float(time.time())
+        ga.save_to_json("../data/Atest")
+        end = float(time.time())
+        print("Time in seconds: " + str(end - start))
+
+    def test_connected(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A5_edited")
+
+        start = float(time.time())
+        ans: List[list] = ga.connected_components()
+        end = float(time.time())
+        print("Time in seconds: " + str(end - start))
+        print(ans[0])
+        print(ans[1])
 
 if __name__ == '__main__':
     unittest.main()

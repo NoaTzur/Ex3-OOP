@@ -84,19 +84,19 @@ class MyTestCase(unittest.TestCase):
         print(ga.connected_components())
 
     """creates a graph with 100 nodes"""
-    def creatingGraph1(self) -> G:
+    def creatingGraph1(self):
         g: G = G.DiGraph()
         for i in range(100):
             g.add_node(i)
 
     """ creates graph with 10^4 nodes"""
-    def creatingGraph2(self) -> G:
+    def creatingGraph2(self):
         g: G = G.DiGraph()
         for i in range(10000):
             g.add_node(i)
 
     """ creates graph with 10^6 nodes"""
-    def creatingGraph3(self) -> G:
+    def creatingGraph3(self):
         g: G = G.DiGraph()
         for i in range(1000000):
             g.add_node(i)
@@ -160,11 +160,21 @@ class MyTestCase(unittest.TestCase):
         ga.load_from_json("../data/A5_edited")
 
         start = float(time.time())
-        ans: List[list] = ga.connected_components()
+        ga.connected_components()
         end = float(time.time())
         print("Time in seconds: " + str(end - start))
-        print(ans[0])
-        print(ans[1])
+
+
+    def test_connected2(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A5_edited")
+
+        start = float(time.time())
+        print(ga.connected_component(0))
+        end = float(time.time())
+        print("Time in seconds: " + str(end - start))
+
 
 if __name__ == '__main__':
     unittest.main()

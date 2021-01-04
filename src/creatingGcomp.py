@@ -2,10 +2,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-labels = ['ShortestPath', 'allConnectedComponents', 'ConnectedComponents']
-java_means = [3, 343, 391]
-python_means = [0.9, 42, 47]
-network_means = [0.9, 0, 2]
+
+labels = ['100 nodes', '10^4 nodes', '10^6 nodes']
+java_means = [0.001, 0.089, 1.856]
+python_means = [0.013, 0.058, 10.172]
+network_means = [0.000, 0.011, 1.315]
 
 x = np.arange(len(labels))  # the label locations
 width = 0.20  # the width of the bars
@@ -16,8 +17,8 @@ rects2 = ax.bar(x + width/2, python_means, width, label='Python')
 rects3 = ax.bar(x + width+0.1, network_means, width, label='networkX')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('time in milliseconds')
-ax.set_title('Comparing graph algorithms')
+ax.set_ylabel('time in seconds')
+ax.set_title('Comparing graph creation')
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
 ax.legend()

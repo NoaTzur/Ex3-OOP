@@ -64,10 +64,25 @@ class MyTestCase(unittest.TestCase):
         g = DiGraph()
         for i in range(1000):
             g.add_node(i)
-        for edge in range(1000-10):
-            g.add_edge(i, i+2, i+0.8)
+
+        for edge in range(990):
+            g.add_edge(edge, edge+2,edge+0.8)
 
         self.assertEqual(990, g.e_size())
+        print("removing 7 edges, after this action - the number of edges should be 983")
+        g.remove_edge(0, 2)
+        g.remove_edge(1, 3)
+        g.remove_edge(2, 4)
+        g.remove_edge(3, 5)
+        g.remove_edge(4, 6)
+        g.remove_edge(5, 7)
+        g.remove_edge(6, 8)
+        self.assertEqual(983, g.e_size())
+
+        g.remove_edge(0,2)
+        self.assertEqual(983, g.e_size()) # removing edge that does not exist- do nothing
+
+
 
 if __name__ == '__main__':
     unittest.main()

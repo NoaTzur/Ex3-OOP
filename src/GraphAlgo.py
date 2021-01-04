@@ -1,7 +1,7 @@
 import json
 import heapq as hq
 import random
-
+import matplotlib.pyplot as plt
 from typing import List
 
 from src import DiGraph as Graph, DiGraph
@@ -190,52 +190,18 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.visitedNodes[src] = 2  # needs to be outside the for ?
 
-    def plot_graph(self):
+     def plot_graph(self):
         fig, axes = plt.subplots(figsize=(10,8))
-        axes.set_facecolor('xkcd:salmon')
-        r=0.1
+        axes.set_facecolor('lightpink')
         for i in self.currGraph.get_all_v():
             x=self.currGraph.get_node(i).getLocation()
             axes.plot(x[0],x[1], marker='o', markersize=5,
                            markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
             for j in self.currGraph.get_node(i).getEdgesFrom():
                 y=self.currGraph.get_node(j).getLocation()
+                plt.annotate(self.currGraph.get_node(i).getKey(),fontsize = 14,fontweight ='bold', xy =(y[0], y[1]),
+                          xytext =(x[0], x[1]),
+                          arrowprops = dict(facecolor ='steelblue'),)
 
-                dirx=(x[0]-y[0])/math.sqrt(math.pow(x[0]-y[0],2)+math.pow((x[1]-y[1]),2))
-                diry=(x[1]-y[1])/math.sqrt(math.pow(x[0]-y[0],2)+math.pow((x[1]-y[1]),2))
-                print(dirx)
-                print(diry)
-
-                p1x=dirx*-r+x[0]
-                p1y=diry*-r+x[1]
-
-                p2x=dirx*r+y[0]
-                p2y=diry*r+y[1]
-                dx=p1x-p2x
-                dy=p1y-p2y
-
-                plt.arrow(x[0],x[1],-dx,-dy,head_width=0.2,head_length=0.1,lw=0.2,length_includes_head=True, ec="white", fc="purple")
-
-        plt.title('GRAPH',fontsize = 14, fontweight ='bold')
+        plt.title('GRAPH',fontsize = 18, fontweight ='bold')
         plt.show()
-
-
-
-    # # first time 
-    # def plot_graph(self):
-    #     fig, axes = plt.subplots(figsize=(10,8))
-    #     axes.set_facecolor('xkcd:salmon')
-    #     for i in self.currGraph.get_all_v():
-    #         x=self.currGraph.get_node(i).getLocation()
-    #         axes.plot(x[0],x[1], marker='o', markersize=5,
-    #                   markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
-    #         for j in self.currGraph.get_node(i).getEdgesFrom():
-    #             y=self.currGraph.get_node(j).getLocation()
-    #             dx=x[0]-y[0]
-    #             dy=x[1]-y[1]
-    #             plt.arrow(x[0],x[1],-dx,-dy, head_width=0.2,lw=0.2 ,length_includes_head=True, ec="white", fc="purple")
-    #
-    #     plt.title('GRAPH',fontsize = 14, fontweight ='bold')
-    #     plt.show()
-
-

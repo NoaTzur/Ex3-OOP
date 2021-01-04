@@ -165,6 +165,27 @@ class MyTestCase(unittest.TestCase):
         print("Time in seconds: " + str(end - start))
         print(ans[0])
         print(ans[1])
+ 
+    def test_plot_graph(self):
+        g: G = G.DiGraph()
+        for i in range(5):
+            g.add_node(i)
+        g.add_edge(0, 1, 7)
+        g.add_edge(3, 4, 6.0)
+        g.add_edge(4, 3, 8.0)
+        g.add_edge(2, 4, 0.5)
+        g.add_edge(4, 2, 7.8)
+        #g.add_edge(5, 2, 2.8)
+        ga: GA = GA.GraphAlgo(g)
+        ga.plot_graph()
+
+    def test_plot_graph2(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A1")
+        ga.plot_graph()
+
+        
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,7 @@
 import json
 import heapq as hq
 import random
-
+import matplotlib.pyplot as plt
 from typing import List
 
 from src import DiGraph as Graph, DiGraph
@@ -190,6 +190,18 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.visitedNodes[src] = 2  # needs to be outside the for ?
 
-    def plot_graph(self) -> None:
-        pass
+     def plot_graph(self):
+        fig, axes = plt.subplots(figsize=(10,8))
+        axes.set_facecolor('lightpink')
+        for i in self.currGraph.get_all_v():
+            x=self.currGraph.get_node(i).getLocation()
+            axes.plot(x[0],x[1], marker='o', markersize=5,
+                           markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
+            for j in self.currGraph.get_node(i).getEdgesFrom():
+                y=self.currGraph.get_node(j).getLocation()
+                plt.annotate(self.currGraph.get_node(i).getKey(),fontsize = 14,fontweight ='bold', xy =(y[0], y[1]),
+                          xytext =(x[0], x[1]),
+                          arrowprops = dict(facecolor ='steelblue'),)
 
+        plt.title('GRAPH',fontsize = 18, fontweight ='bold')
+        plt.show()

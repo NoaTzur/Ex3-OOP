@@ -190,7 +190,7 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.visitedNodes[src] = 2  # needs to be outside the for ?
 
-     def plot_graph(self):
+    def plot_graph(self):
         fig, axes = plt.subplots(figsize=(10,8))
         axes.set_facecolor('lightpink')
         for i in self.currGraph.get_all_v():

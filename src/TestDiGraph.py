@@ -60,5 +60,14 @@ class MyTestCase(unittest.TestCase):
         print("mc: ", g.get_mc())
 
 
+    def test_remove_edges(self):
+        g = DiGraph()
+        for i in range(1000):
+            g.add_node(i)
+        for edge in range(1000-10):
+            g.add_edge(i, i+2, i+0.8)
+
+        self.assertEqual(990, g.e_size())
+
 if __name__ == '__main__':
     unittest.main()

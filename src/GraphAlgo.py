@@ -191,17 +191,22 @@ class GraphAlgo(GraphAlgoInterface):
         self.visitedNodes[src] = 2  # needs to be outside the for ?
 
     def plot_graph(self):
-        fig, axes = plt.subplots(figsize=(10,8))
-        axes.set_facecolor('lightpink')
-        for i in self.currGraph.get_all_v():
-            x=self.currGraph.get_node(i).getLocation()
-            axes.plot(x[0],x[1], marker='o', markersize=5,
-                           markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
-            for j in self.currGraph.get_node(i).getEdgesFrom():
-                y=self.currGraph.get_node(j).getLocation()
-                plt.annotate(self.currGraph.get_node(i).getKey(),fontsize = 14,fontweight ='bold', xy =(y[0], y[1]),
-                          xytext =(x[0], x[1]),
-                          arrowprops = dict(facecolor ='steelblue'),)
-
+        ax=plt.axes()
+        ax.set_facecolor('lightpink')
+        R=0.00045
+        for node in self.currGraph.get_all_v():
+            x=self.currGraph.get_node(node).getLocation()[0]
+            y=self.currGraph.get_node(node).getLocation()[1]
+            ax.plot(x,y, marker='o', markersize=5,
+                    markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
+            for newnode in self.currGraph.get_node(node).getEdgesFrom():
+                x1=self.currGraph.get_node(newnode).getLocation()[0]
+                y1=self.currGraph.get_node(newnode).getLocation()[1]
+                dirx=(x-x1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
+                diry=(y-y1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
+                p1x=dirx*R+x1
+                p1y=diry*R+y1
+                plt.arrow(x,y,p1x-x,p1y-y,head_width=R*0.6,head_length=R-0.0001,width=R*R, ec="purple", fc="purple")
         plt.title('GRAPH',fontsize = 18, fontweight ='bold')
         plt.show()
+

@@ -6,7 +6,7 @@ in this exercise we impleneted directed and weighted Graph and includes :
 
 * Class that creates a graph - you can add nodes and edges manually, or from a Json files
   (an example of such files can be found in the data folder)
-* Class thats includes algorithms on graph such as shortest path between 2 nodes (using Dikjstra algorithm),
+* Class thats includes algorithms on graph such as shortest path between 2 nodes (using Dikjstra algorithm)
 
 
 ## The connection between this Ex to the previous one - Ex2-OOP

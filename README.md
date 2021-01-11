@@ -2,7 +2,7 @@
 
 
 This repository is for an exercise belong to OOP course.
-in this exercise we impleneted directed and weighted Graph and includes :
+in this exercise we impleneted directed and weighted Graph and its includes :
 
 * Class that creates a graph - you can add nodes and edges manually, or from a Json files
   (an example of such files can be found in the data folder)

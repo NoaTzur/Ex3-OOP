@@ -20,4 +20,6 @@ In addition, we've been requested to add comparison with the networkX library fo
 contains lots of options.
 you can read about this library [RIGHT HERE](https://networkx.org/)
 
-``` We're inviting you to watch in the Wiki of this repository for more information ! ```
+In addition, you can run the comparisons test by yourself ! goto -> wiki -> Comparisons page.
+
+``` We're inviting you to look at the Wiki of this repository for more information ! ```

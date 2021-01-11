@@ -32,7 +32,7 @@ class DiGraph(GraphInterface):
             return node.getEdgesTo()
 
     def all_out_edges_of_node(self, id1: int) -> dict:
-        node = self.myGraph.get(id1, Node)  # returns NodeClass with id1
+        node: Node = self.myGraph.get(id1)  # returns NodeClass with id1
         if node is not None:
             return node.getEdgesFrom()
 
@@ -40,8 +40,8 @@ class DiGraph(GraphInterface):
         return self.MC
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
-        node1: Node = self.myGraph.get(id1, Node)
-        node2: Node = self.myGraph.get(id2, Node)
+        node1: Node = self.myGraph.get(id1)
+        node2: Node = self.myGraph.get(id2)
 
         if(node1 is None) or (node2 is None):
             return False

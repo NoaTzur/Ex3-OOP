@@ -18,9 +18,17 @@ class GraphAlgo(GraphAlgoInterface):
         self.counter: int = 0
 
     def get_graph(self) -> DiGraph:
+        """
+        :return: the directed graph on which the algorithm works on.
+        """
         return self.currGraph
 
     def load_from_json(self, file_name: str) -> bool:
+        """
+        Loads a graph from a json file.
+        @param file_name: The path to the json file
+        @returns True if the loading was successful, False
+        """
         with open(file_name, 'r') as file:
             json_graph = json.load(file)
 
@@ -51,6 +59,11 @@ class GraphAlgo(GraphAlgoInterface):
         return True
 
     def save_to_json(self, file_name: str) -> bool:
+        """
+        Saves the graph in JSON format to a file
+        @param file_name: The path to the out file
+        @return: True if the save was successful, False
+        """
         listOfNodes: list = []
         i: int = 0
         for node in self.currGraph.get_all_v().values():
@@ -74,6 +87,23 @@ class GraphAlgo(GraphAlgoInterface):
             return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
+        """
+        return the shortest path distance between src node and dest node, calculates
+        by the edges weights, and the relavent path (the keys of the nodes).
+        this function is based on the Dijkstra algorithm:
+        Dijkstra algorithm - at the beginning of the code, with for loop, we marks all nodes in the graph
+        with Tag = INFINITY. the Tag label will represent the distance from the src node. src node Tag ==0.
+        we used a PriorityQueue as a min-Heap, that will sort the values by the Tag label.
+        first, the src node pushed into the queue. while the queue is not empty, iterate through all nodes that
+        connected to src node,and update its Tag to = parent_node_Tag(src in the beginning) + current edge.
+        After we going through all the nodes "neighbors" - mark it as visited so it wont checks it again.
+        to each node, we updates its parent (in dictionary that designated for it).
+        When arriving to the dest node its Tag will be the summary of the shortest distance
+        from src to dest thanks to the priority queue that poll the nodes that holds the smallest Tag(distance).
+        @param id1: The start node id
+        @param id2: The end node id
+        @return: The distance of the path, the path as a list
+        """
         self.parents.clear()
         for node in self.currGraph.get_all_v().values():
             node.setTag(float('inf'))
@@ -138,70 +168,110 @@ class GraphAlgo(GraphAlgoInterface):
         return path
 
     def connected_component(self, id1: int) -> list:
+        """
+        Finds the Strongly Connected Component(SCC) that node id1 is a part of.
+        in this function, we are using is_connect function we wrote.
+        is_connect function update the componentMark of the nodes to be the component 'family' they are belongs to.
+        (more information about how its done - in is_connect function description.
+        after the marks of this field, we are iterates through all nodes and append to the list only the nodes that marks with
+        0, this is the mark of the node associated to id1 key.
+        @param id1: The node id
+        @return: The list of nodes in the SCC
 
-        if id1 not in self.currGraph.get_all_v().keys():
-            return []
+        """
+        self.counter = 0
+        id1_node: Node = self.currGraph.get_node(id1)
+        self.is_connect(id1_node)
+        theList: list = []
 
-        allComponents: List[list] = self.connected_components()
-        for i in range(self.counter):
-            if id1 in allComponents[i]:
-                return allComponents[i]
+        for node in self.currGraph.get_all_v().values():
+            if node.getComponentMark() == 0:
+                theList.append(node.getKey())
+
+        return theList
 
     def connected_components(self) -> List[list]:
+        """
+        Finds all the Strongly Connected Component(SCC) in the graph.
+        This function is using is_connect function we wrote, is_connect function update the componentMark of the nodes to be the component 'family' they are belongs to.
+        (more information about how its done - in is_connect function description.
+        after the marks of this field, we are iterates through all nodes and append to the upper list node by node, when this
+        components each node contains, represent the index in the list, in this index there is another list, we append the
+        key of the node with specific components mark to the list in this index.
+        in the end we get List[list] each list is a list of nodes keys that is in the same component.
+        @return: The list all SCC
+        """
         self.counter = 0
-        allComponents = []
-        self.visitedNodes.clear()
-        self.DFS()
-        """ creates number of list (as number od counter-number of the components in the graph)
-        and append the lists to the Main List """
+        for node in self.currGraph.get_all_v().values():
+            node.setComponentMark(float('-inf'))
+
+        for node in self.currGraph.get_all_v().values():
+            if node.getComponentMark() < 0: #or node.getComponentMark() == float('-inf'):
+                self.is_connect(node)
+
+        list_of_comp: List[list] = []
         for i in range(self.counter):
-            allComponents.insert(i, [])
+            list_of_comp.insert(i, [])
 
-        for nodes in self.currGraph.get_all_v().values():
-            allComponents[nodes.getComponentMark()].append(nodes.getKey())
+        for node in self.currGraph.get_all_v().values():
+            list_of_comp[node.getComponentMark()].append(node.getKey())
 
-        filteredList: list = []
+        return list_of_comp
 
-        for i in range(len(allComponents)):
-            if len(allComponents[i]) > 0:
-                filteredList.append(allComponents[i])
+    def is_connect(self, node: Node):
+        """
+        Iterative function - marks each node with its 'family' components via componentMark field each node have.
+        we are using a queue, puts in the queue node(the node this function is getting as input) then - while
+        the queue isnt empty, pop an node from the queue (key of the node to be precisely) and iterate through its 'neighbors'
+        (nodes that an edges go from main node).
+        and mark the componentMark of all neighbors in '-1'.
+        then, iterate again, but now - on the edges going TO the main node. each node that have componentMark == -1
+        AND existing in the edges going FROM main node (that means that they are STRONGLY connected) only this nodes -
+        we marks its componentMark to the number that counter is now contains.
+        after this process, all nodes that is the same strongly connected component will mark with the same id number.
+        after finishing with iterating through the current component of main node, increasing the counter by one - for the next
+        'family' to be id with new mark.
+        """
+        listOfNodes = []
+        listOfNodes.append(node.getKey())
+        hq.heapify(listOfNodes)
 
-        return filteredList
+        node.setComponentMark(-1)
+        while len(listOfNodes) != 0:
+            keyNode: int = hq.heappop(listOfNodes)
+            tempNode: Node = self.currGraph.get_node(keyNode)
+            for edge in tempNode.getEdgesFrom().keys():
+                if self.currGraph.get_node(edge).getComponentMark() == float('-inf'):
+                    self.currGraph.get_node(edge).setComponentMark(-1)
+                    hq.heappush(listOfNodes, edge)
 
-    def DFS(self):
-        for nodeKey in self.currGraph.get_all_v().keys():
-            self.visitedNodes[nodeKey] = 0
+        hq.heappush(listOfNodes, node.getKey())
+        node.setComponentMark(self.counter)
+        while len(listOfNodes) != 0:
+            keyNode: int = hq.heappop(listOfNodes)
+            tempNode: Node = self.currGraph.get_node(keyNode)
+            for edge in tempNode.getEdgesTo().keys():
+                if self.currGraph.get_node(edge).getComponentMark() == -1 and edge in tempNode.getEdgesFrom().keys():
+                    self.currGraph.get_node(edge).setComponentMark(self.counter)
+                    hq.heappush(listOfNodes, edge)
 
-        for node in self.currGraph.get_all_v().keys():
-            self.DFSvisit(node)
-            self.counter = self.counter+1
+        self.counter = self.counter+1
 
-    def DFSvisit(self, src: int):
-        if self.visitedNodes.get(src) == 0:
-            self.currGraph.get_node(src).setComponentMark(self.counter)
-
-        self.visitedNodes[src] = 1
-        for node_neigh in self.currGraph.get_node(src).getEdgesFrom().keys():
-            path: float = self.shortest_path(node_neigh, src)[0]
-
-            if self.visitedNodes.get(node_neigh) == 0 and path != float('inf'):
-                self.currGraph.get_node(node_neigh).setComponentMark(self.counter)
-                self.DFSvisit(node_neigh)
-
-        self.visitedNodes[src] = 2  # needs to be outside the for ?
 
     def plot_graph(self):
-        fig, axes = plt.subplots(figsize=(10,8))
-        axes.set_facecolor('lightpink')
-        for i in self.currGraph.get_all_v():
-            x=self.currGraph.get_node(i).getLocation()
-            axes.plot(x[0],x[1], marker='o', markersize=5,
-                           markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
-            for j in self.currGraph.get_node(i).getEdgesFrom():
-                y=self.currGraph.get_node(j).getLocation()
-                plt.annotate(self.currGraph.get_node(i).getKey(),fontsize = 14,fontweight ='bold', xy =(y[0], y[1]),
-                          xytext =(x[0], x[1]),
-                          arrowprops = dict(facecolor ='steelblue'),)
 
-        plt.title('GRAPH',fontsize = 18, fontweight ='bold')
+        g = self.currGraph
+        nodes = g.get_all_v().values()
+        ax = plt.axes()
+        for node in nodes:
+            x = node.getLocation()[0]
+            y = node.getLocation()[1]
+            if len(node.getEdgesFrom()) == 0 and len(node.getEdgesTo()) == 0:
+                plt.plot(x, y, 'bo')
+            for e in node.getEdgesFrom().keys():
+                ni = g.get_node(e)
+                x_ni = ni.getLocation()[0]
+                y_ni = ni.getLocation()[1]
+                plt.arrow(x, y, x_ni - x, y_ni - y, visible=True, in_layout=True)
+
         plt.show()

@@ -10,7 +10,7 @@ class node_data:
         self.edgesTo = dict()  # reverse edges going to the main node <key: int, weight: float>
         self.tag = float('inf')
         self.location = pos
-        self.componentMark = 0
+        self.componentMark = float('-inf')
 
     def __repr__(self):
         return str(self.getLocation())

@@ -1,5 +1,6 @@
 import json
 import heapq as hq
+import math
 import random
 import matplotlib.pyplot as plt
 from typing import List
@@ -257,21 +258,23 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.counter = self.counter+1
 
-
     def plot_graph(self):
-
-        g = self.currGraph
-        nodes = g.get_all_v().values()
-        ax = plt.axes()
-        for node in nodes:
-            x = node.getLocation()[0]
-            y = node.getLocation()[1]
-            if len(node.getEdgesFrom()) == 0 and len(node.getEdgesTo()) == 0:
-                plt.plot(x, y, 'bo')
-            for e in node.getEdgesFrom().keys():
-                ni = g.get_node(e)
-                x_ni = ni.getLocation()[0]
-                y_ni = ni.getLocation()[1]
-                plt.arrow(x, y, x_ni - x, y_ni - y, visible=True, in_layout=True)
-
+        ax=plt.axes()
+        ax.set_facecolor('lightpink')
+        R=0.00045
+        for node in self.currGraph.get_all_v():
+            x=self.currGraph.get_node(node).getLocation()[0]
+            y=self.currGraph.get_node(node).getLocation()[1]
+            ax.plot(x,y, marker='o', markersize=5,
+                    markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
+            for newnode in self.currGraph.get_node(node).getEdgesFrom():
+                x1=self.currGraph.get_node(newnode).getLocation()[0]
+                y1=self.currGraph.get_node(newnode).getLocation()[1]
+                dirx=(x-x1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
+                diry=(y-y1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
+                p1x=dirx*R+x1
+                p1y=diry*R+y1
+                plt.arrow(x,y,p1x-x,p1y-y,head_width=R*0.6,head_length=R-0.0001,width=R*R, ec="purple", fc="purple")
+        plt.title('GRAPH',fontsize = 18, fontweight ='bold')
         plt.show()
+

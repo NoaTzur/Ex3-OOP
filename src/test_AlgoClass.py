@@ -221,11 +221,22 @@ class MyTestCase(unittest.TestCase):
         print(len(ans))
         print("")
 
+    def test_plot1(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/A0")
+        ga.plot_graph()
 
-    def test_plot(self):
+    def test_plot2(self):
         g: G = G.DiGraph()
         ga: GA = GA.GraphAlgo(g)
         ga.load_from_json("../data/A3")
+        ga.plot_graph()
+
+    def test_plot3(self):
+        g: G = G.DiGraph()
+        ga: GA = GA.GraphAlgo(g)
+        ga.load_from_json("../data/G_100_800_0.json")
         ga.plot_graph()
 
 if __name__ == '__main__':

@@ -122,11 +122,10 @@ class MyTestCase(unittest.TestCase):
             allComponents: set = nx.algorithms.strongly_connected_components(G)
             for i in allComponents:
                 if 0 in i:
-                    print("Component that contains node with key 0:",i)
+                    print("Component that contains node with key 0:", i)
             end = float(time.time())
             ans = end - start
             print("")
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -258,17 +258,14 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.counter = self.counter+1
 
-
-
-    """
+    def plot_graph(self):
+        """
         Plot function- in this function we drowe graph by matplotlib.
         we are iterate all the node in the graph , and then iterate again on all the node's neighbors
         we keep two variable-
         1 is dis - that calculated the distance between the main node and the neighbor node - with the help of this variable we got the specific location for the arrows.
         2 is ans - that holds the average of the smallest dist and longest dist ,we used it for keeping proportions of the arrow
         """
-
-    def plot_graph(self):
         ax = plt.axes()
         ax.set_facecolor('lightpink')
         min = 0;

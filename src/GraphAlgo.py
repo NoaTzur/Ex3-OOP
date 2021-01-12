@@ -258,23 +258,62 @@ class GraphAlgo(GraphAlgoInterface):
 
         self.counter = self.counter+1
 
+
+
+    """
+        Plot function- in this function we drowe graph by matplotlib.
+        we are iterate all the node in the graph , and then iterate again on all the node's neighbors
+        we keep two variable-
+        1 is dis - that calculated the distance between the main node and the neighbor node - with the help of this variable we got the specific location for the arrows.
+        2 is ans - that holds the average of the smallest dist and longest dist ,we used it for keeping proportions of the arrow
+        """
+
     def plot_graph(self):
-        ax=plt.axes()
+        ax = plt.axes()
         ax.set_facecolor('lightpink')
-        R=0.00045
+        min = 0;
+        max = 0;
+        size = self.currGraph.v_size()
+        if size > 1000:
+            size = 5
+        for thenode in range(size):
+            x = self.currGraph.get_node(thenode).getLocation()[0]
+            y = self.currGraph.get_node(thenode).getLocation()[1]
+            for newnode in self.currGraph.get_node(thenode).getEdgesFrom():
+                x1 = self.currGraph.get_node(newnode).getLocation()[0]
+                y1 = self.currGraph.get_node(newnode).getLocation()[1]
+                dis = math.hypot(x - x1, y - y1) - 0.0045
+                R = 0.0045 * abs(dis)
+                if dis == 0:
+                    dirx = (x - x1) / 0.01 - R
+                else:
+                    dirx = (x - x1) / dis - R
+                p1x = dirx * R + x1
+                if p1x - x < min and p1x - x > 0:
+                    min = p1x - x
+                if p1x - x > max:
+                    max = p1x - x
+        ans = (abs(min + max)) / 2
         for node in self.currGraph.get_all_v():
-            x=self.currGraph.get_node(node).getLocation()[0]
-            y=self.currGraph.get_node(node).getLocation()[1]
-            ax.plot(x,y, marker='o', markersize=5,
+            x = self.currGraph.get_node(node).getLocation()[0]
+            y = self.currGraph.get_node(node).getLocation()[1]
+            ax.plot(x, y, marker='o', markersize=5,
                     markerfacecolor="black", markeredgewidth=1, markeredgecolor="black")
             for newnode in self.currGraph.get_node(node).getEdgesFrom():
-                x1=self.currGraph.get_node(newnode).getLocation()[0]
-                y1=self.currGraph.get_node(newnode).getLocation()[1]
-                dirx=(x-x1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
-                diry=(y-y1)/math.sqrt(math.pow(x-x1,2)+math.pow((y-y1),2))-R
-                p1x=dirx*R+x1
-                p1y=diry*R+y1
-                plt.arrow(x,y,p1x-x,p1y-y,head_width=R*0.6,head_length=R-0.0001,width=R*R, ec="purple", fc="purple")
-        plt.title('GRAPH',fontsize = 18, fontweight ='bold')
+                x1 = self.currGraph.get_node(newnode).getLocation()[0]
+                y1 = self.currGraph.get_node(newnode).getLocation()[1]
+                dis = math.hypot(x - x1, y - y1) - 0.0045
+                R = 0.0045 * abs(dis)
+                if dis == 0:
+                    dirx = (x - x1) / (0.01 - R)
+                    diry = (y - y1) / (0.01 - R)
+                else:
+                    dirx = (x - x1) / (dis - R)
+                    diry = (y - y1) / (dis - R)
+                p1x = dirx * (R) + x1
+                p1y = diry * (R) + y1
+                plt.arrow(x, y, (p1x - x), (p1y - y), head_width=math.pow(abs(ans) / 2, 1) / 10,
+                          head_length=math.pow(abs(ans) / 2, 1) / 10, length_includes_head=True, width=R * R,
+                          ec="purple", fc="blue")
+        plt.title('GRAPH', fontsize=18, fontweight='bold')
         plt.show()
-

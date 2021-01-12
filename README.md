@@ -33,3 +33,7 @@ you can read about this library [RIGHT HERE](https://networkx.org/)
 8. compares_creatingG - histograph that represents the differences in run time when building a graphs.
 
 ``` We're inviting you to look at the Wiki of this repository for more information ! ```
+
+
+![Capture](https://user-images.githubusercontent.com/72066777/104295634-6683b780-54c9-11eb-8ca1-67245b79294d.PNG)
+

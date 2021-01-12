@@ -22,4 +22,14 @@ you can read about this library [RIGHT HERE](https://networkx.org/)
 
 **Notice** - you can run the comparisons test by yourself ! goto -> wiki -> Comparisons page.
 
+## List of classes:
+1.DiGraph - implements GraphInterface.py Interface.
+2.GraphAlgo - implements GraphAlgoInterface.py Interface.
+3.node_data - implements node class, each node has its own data.
+4.test_AlgoClass - unit tests for the algorithms written in GraphAlgo class.
+5.test_DiGraph - unit tests for checking the functions of the graph in DiGraph class.
+6.test_netWorkX - unit tests for studied the network library.
+7.compares_algo - histograph that represents the differences in run time (running algorithms).
+8.compares_creatingG - histograph that represents the differences in run time when building a graphs.
+
 ``` We're inviting you to look at the Wiki of this repository for more information ! ```
